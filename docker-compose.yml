@@ -1,0 +1,17 @@
+services:
+  nginx:
+    image: 'docker.arvancloud.ir/jc21/nginx-proxy-manager:2.12.3'
+    restart: unless-stopped
+    ports:
+      - '80:80'
+      - '443:443'
+      - '81:81' # Admin Web Port
+    environment:
+      - DB_SQLITE_FILE=${NGINX_DB_SQLITE_FILE}
+      - INITIAL_ADMIN_EMAIL=${NGINX_INITIAL_ADMIN_EMAIL}
+      - INITIAL_ADMIN_PASSWORD=${NGINX_INITIAL_ADMIN_PASSWORD}
+      - TZ=${TIMEZONE}
+    volumes:
+      - ./nginx/data:/data
+      - ./nginx/letsencrypt:/etc/letsencrypt
+  #  network_mode: host
