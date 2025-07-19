@@ -1,17 +1,26 @@
 services:
   nginx:
-    image: 'docker.arvancloud.ir/jc21/nginx-proxy-manager:2.12.3'
-    restart: unless-stopped
+    image: ${DOCKER_IMAGE_NAME}
+    restart: ${CONTAINER_RESTART}
     ports:
       - '80:80'
       - '443:443'
       - '81:81' # Admin Web Port
     environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
       - DB_SQLITE_FILE=${NGINX_DB_SQLITE_FILE}
       - INITIAL_ADMIN_EMAIL=${NGINX_INITIAL_ADMIN_EMAIL}
       - INITIAL_ADMIN_PASSWORD=${NGINX_INITIAL_ADMIN_PASSWORD}
       - TZ=${TIMEZONE}
+      - DISABLE_IPV6=${DISABLE_IPV6}
+      - IP_RANGES_FETCH_ENABLED=${IP_RANGES_FETCH_ENABLED}
+      - X_FRAME_OPTIONS=${X_FRAME_OPTIONS}
     volumes:
       - ./nginx/data:/data
       - ./nginx/letsencrypt:/etc/letsencrypt
+    healthcheck:
+      test: ["CMD", "/usr/bin/check-health"]
+      interval: 10s
+      timeout: 3s
   #  network_mode: host
